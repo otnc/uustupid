@@ -10,6 +10,7 @@ export const en = {
   'hero.copy': 'Copy',
   'hero.langLabel': 'Language',
   'hero.copied': 'Copied',
+  'hero.copyFailed': 'Could not copy — select the value and copy it yourself',
   'hero.warning':
     'This is not a UUID. Never use it where a real UUID is expected. It is for jokes, mocks and fixtures.',
 
@@ -42,9 +43,6 @@ export const en = {
   'verify.title': 'See for yourself',
   'verify.lead':
     'Both values below were fed to an RFC 9562 validator embedded in this page. That validator shares no code with the package.',
-  'verify.source': 'Source',
-  'verify.value': 'Value',
-  'verify.result': 'Verdict',
   'verify.valid': 'Valid UUID',
   'verify.invalid': 'Not a UUID',
   'verify.note': 'Fresh values on every load. The verdicts never swap around.',
@@ -78,6 +76,7 @@ export const ja: Record<Key, string> = {
   'hero.copy': 'コピー',
   'hero.langLabel': '表示言語',
   'hero.copied': 'コピーしました',
+  'hero.copyFailed': 'コピーできませんでした — 値を選択して手動でコピーしてください',
   'hero.warning':
     'これは UUID ではありません。UUID が必要な場所では使わないでください。用途はジョーク、モック、テストデータです。',
 
@@ -110,9 +109,6 @@ export const ja: Record<Key, string> = {
   'verify.title': '検証してみる',
   'verify.lead':
     'このページに埋め込んだ RFC 9562 検証器に食わせた結果です。検証器はパッケージのコードを一切使っていません。',
-  'verify.source': '生成元',
-  'verify.value': '値',
-  'verify.result': '判定',
   'verify.valid': '有効な UUID',
   'verify.invalid': '無効な UUID',
   'verify.note': '読み込むたびに新しい値で判定しています。何度試しても結果は入れ替わりません。',

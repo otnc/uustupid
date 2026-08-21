@@ -10,6 +10,7 @@ const runtime = {
   en: {
     title: en['meta.title'],
     copied: en['hero.copied'],
+    copyFailed: en['hero.copyFailed'],
     valid: en['verify.valid'],
     invalid: en['verify.invalid'],
     hint: en['bulk.hint'],
@@ -19,6 +20,7 @@ const runtime = {
   ja: {
     title: ja['meta.title'],
     copied: ja['hero.copied'],
+    copyFailed: ja['hero.copyFailed'],
     valid: ja['verify.valid'],
     invalid: ja['verify.invalid'],
     hint: ja['bulk.hint'],
@@ -37,6 +39,11 @@ const lang = preferred.toLowerCase().startsWith('ja') ? 'ja' : 'en'
 document.documentElement.dataset.lang = lang
 document.documentElement.lang = lang
 document.documentElement.dataset.js = ''
+document.addEventListener('DOMContentLoaded', () => {
+  for (const button of document.querySelectorAll('[data-set-lang]')) {
+    button.setAttribute('aria-pressed', String(button.dataset.setLang === lang))
+  }
+})
 `
 ---
 
@@ -51,6 +58,7 @@ document.documentElement.dataset.js = ''
     {canonical && <link rel="canonical" href={canonical} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
+    {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:title" content={en['meta.title']} />
     <meta property="og:description" content={en['meta.description']} />
     <meta name="twitter:card" content="summary" />

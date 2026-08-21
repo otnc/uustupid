@@ -7,6 +7,7 @@ type Lang = 'ja' | 'en'
 interface Strings {
   title: string
   copied: string
+  copyFailed: string
   valid: string
   invalid: string
   hint: string
@@ -71,13 +72,15 @@ const toast = $('[data-toast]')
 let toastTimer: number | undefined
 
 async function copy(text: string): Promise<void> {
+  let message = t().copied
   try {
     await navigator.clipboard.writeText(text)
   } catch {
-    return
+    // Denied, or no clipboard at all outside a secure context.
+    message = t().copyFailed
   }
   if (!toast) return
-  toast.textContent = t().copied
+  toast.textContent = message
   toast.classList.add('on')
   window.clearTimeout(toastTimer)
   toastTimer = window.setTimeout(() => toast.classList.remove('on'), 1400)
@@ -114,8 +117,16 @@ function highlightAnatomy(id: string): void {
 
 function renderNibbles(id: string): void {
   const fields = [
-    { key: 'version', nibble: id.charAt(VERSION_INDEX), inside: inRange(id.charAt(14), 0x1, 0x8) },
-    { key: 'variant', nibble: id.charAt(VARIANT_INDEX), inside: inRange(id.charAt(19), 0x8, 0xb) },
+    {
+      key: 'version',
+      nibble: id.charAt(VERSION_INDEX),
+      inside: inRange(id.charAt(VERSION_INDEX), 0x1, 0x8),
+    },
+    {
+      key: 'variant',
+      nibble: id.charAt(VARIANT_INDEX),
+      inside: inRange(id.charAt(VARIANT_INDEX), 0x8, 0xb),
+    },
   ]
 
   for (const field of fields) {
@@ -158,11 +169,13 @@ function showId(id: string): void {
   if (anatomy) type(anatomy, id, () => highlightAnatomy(id))
   renderNibbles(id)
 
+  // The verdict lands with the value, not ahead of it: the point is that the
+  // checker read what is on screen.
   const fake = $('[data-verify-value="fake"]')
-  if (fake) type(fake, shown.fake)
+  if (fake) type(fake, shown.fake, renderVerify)
   const real = $('[data-verify-value="real"]')
-  if (real) type(real, shown.real)
-  renderVerify()
+  if (real) type(real, shown.real, renderVerify)
+  if (!fake && !real) renderVerify()
 }
 
 /* Bulk --------------------------------------------------------------------- */
@@ -180,6 +193,7 @@ function fillList(): void {
 
   const values = Array.from({ length: count }, () => uustupid())
   const hint = t().hint
+  list.removeAttribute('data-typed')
   list.textContent = ''
   cancelAnimationFrame(spooling)
 
@@ -223,7 +237,7 @@ function applyLang(next: Lang): void {
 document.addEventListener('click', (event) => {
   const target = event.target as HTMLElement
 
-  const copyable = target.closest<HTMLElement>('[data-copyable], .ids li')
+  const copyable = target.closest<HTMLElement>('.ids li')
   if (copyable?.textContent) void copy(copyable.textContent)
 
   const setLang = target.closest<HTMLElement>('[data-set-lang]')
