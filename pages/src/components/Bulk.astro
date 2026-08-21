@@ -1,5 +1,11 @@
 ---
 import T from './T.astro'
+
+interface Props {
+  seeds: string[]
+}
+
+const { seeds } = Astro.props
 ---
 
 <section id="bulk" class="wrap">
@@ -16,5 +22,7 @@ import T from './T.astro'
     </button>
   </div>
 
-  <ol class="ids" data-list></ol>
+  <ol class="ids" data-list data-typed>
+    {seeds.map((seed) => <li>{seed}</li>)}
+  </ol>
 </section>

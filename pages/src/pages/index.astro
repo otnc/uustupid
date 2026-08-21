@@ -13,6 +13,7 @@ import Base from '../layouts/Base.astro'
 // Built by the real package at build time, so the page works without JavaScript.
 const seed = uustupid()
 const uuid = crypto.randomUUID()
+const seeds = Array.from({ length: 16 }, () => uustupid())
 ---
 
 <Base>
@@ -22,7 +23,7 @@ const uuid = crypto.randomUUID()
     <Method />
     <Anatomy seed={seed} />
     <Verify seed={seed} uuid={uuid} />
-    <Bulk />
+    <Bulk seeds={seeds} />
     <Install />
   </main>
   <Footer />
