@@ -1,0 +1,88 @@
+---
+import isUuid from 'is-uuid'
+import * as realUuid from 'uuid'
+import validator from 'validator'
+import * as yup from 'yup'
+import { z } from 'zod'
+import { isRfc9562Uuid } from '../scripts/rfc9562'
+import T from './T.astro'
+
+interface Props {
+  seed: string
+  uuid: string
+}
+
+const { seed, uuid } = Astro.props
+
+const rows = [
+  { source: 'uustupid()', value: seed, key: 'fake' },
+  { source: 'crypto.randomUUID()', value: uuid, key: 'real' },
+]
+
+/** Run at build time only — none of these libraries reach the browser. */
+const libraries: Array<{ name: string; check: (value: string) => boolean }> = [
+  { name: 'uuid.validate()', check: (value) => realUuid.validate(value) },
+  { name: 'validator.isUUID()', check: (value) => validator.isUUID(value) },
+  { name: 'is-uuid.anyNonNil()', check: (value) => isUuid.anyNonNil(value) },
+  { name: 'zod.uuid()', check: (value) => z.uuid().safeParse(value).success },
+  { name: 'yup.string().uuid()', check: (value) => yup.string().uuid().isValidSync(value) },
+]
+
+const verdicts = libraries.map((library) => ({
+  name: library.name,
+  ours: library.check(seed),
+  real: library.check(uuid),
+}))
+---
+
+<section id="verify" class="wrap">
+  <h2><T k="verify.title" /></h2>
+  <p class="lead"><T k="verify.lead" /></p>
+
+  <div class="rows">
+    {
+      rows.map((row) => (
+        <div class="row">
+          <code class="row__label">{row.source}</code>
+          <span class="row__value id" data-verify-value={row.key} data-typed>
+            {row.value}
+          </span>
+          <span
+            class={isRfc9562Uuid(row.value) ? 'verdict verdict--pass' : 'verdict verdict--fail'}
+            data-verify-result={row.key}
+          >
+            <T k={isRfc9562Uuid(row.value) ? 'verify.valid' : 'verify.invalid'} />
+          </span>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="note"><T k="verify.note" /></p>
+
+  <h3><T k="verify.libraries" /></h3>
+  <p class="lead"><T k="verify.librariesLead" /></p>
+
+  <div class="rows">
+    <div class="row row--head">
+      <span class="row__label"><T k="verify.library" /></span>
+      <span class="row__label">uustupid()</span>
+      <span class="row__label">crypto.randomUUID()</span>
+    </div>
+    {
+      verdicts.map((verdict) => (
+        <div class="row">
+          <code class="row__label row__label--plain">{verdict.name}</code>
+          <span class={verdict.ours ? 'verdict verdict--pass' : 'verdict verdict--fail'}>
+            <T k={verdict.ours ? 'verify.valid' : 'verify.invalid'} />
+          </span>
+          <span class={verdict.real ? 'verdict verdict--pass' : 'verdict verdict--fail'}>
+            <T k={verdict.real ? 'verify.valid' : 'verify.invalid'} />
+          </span>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="note"><T k="verify.librariesNote" /></p>
+</section>

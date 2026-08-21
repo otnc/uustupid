@@ -1,0 +1,48 @@
+---
+import { Code } from 'astro:components'
+import T from './T.astro'
+
+const themes = { light: 'vitesse-light', dark: 'vitesse-dark' } as const
+
+const managers = [
+  { name: 'npm', command: 'npm install uustupid' },
+  { name: 'pnpm', command: 'pnpm add uustupid' },
+  { name: 'yarn', command: 'yarn add uustupid' },
+  { name: 'bun', command: 'bun add uustupid' },
+]
+
+const usage = `import { uustupid, isUustupid } from 'uustupid'
+
+uustupid()
+// '9fe48100-f45f-0313-e1f9-995894390159'
+// 'd8cf2a57-aaf4-d895-4b86-253e067ce979'
+
+isUustupid(uustupid())          // true
+isUustupid(crypto.randomUUID()) // false`
+---
+
+<section id="install" class="wrap">
+  <h2><T k="install.title" /></h2>
+  <p class="lead"><T k="install.note" /></p>
+
+  <div class="tabs" role="group" aria-label="Package manager">
+    {
+      managers.map((pm, index) => (
+        <button type="button" data-pm={pm.name} aria-pressed={index === 0 ? 'true' : 'false'}>
+          {pm.name}
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    managers.map((pm, index) => (
+      <div data-command={pm.name} hidden={index !== 0}>
+        <Code code={pm.command} lang="bash" themes={themes} defaultColor={false} />
+      </div>
+    ))
+  }
+
+  <h3><T k="install.usage" /></h3>
+  <Code code={usage} lang="ts" themes={themes} defaultColor={false} />
+</section>

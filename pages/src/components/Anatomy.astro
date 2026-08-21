@@ -1,0 +1,62 @@
+---
+import T from './T.astro'
+
+interface Props {
+  seed: string
+}
+
+const { seed } = Astro.props
+
+const inRange = (nibble: string, low: number, high: number): boolean => {
+  const value = Number.parseInt(nibble, 16)
+  return value >= low && value <= high
+}
+
+const rows = [
+  {
+    key: 'version',
+    label: 'anatomy.version',
+    uses: '1-8',
+    actual: seed.charAt(14),
+    inside: inRange(seed.charAt(14), 0x1, 0x8),
+  },
+  {
+    key: 'variant',
+    label: 'anatomy.variant',
+    uses: '8 / 9 / a / b',
+    actual: seed.charAt(19),
+    inside: inRange(seed.charAt(19), 0x8, 0xb),
+  },
+] as const
+---
+
+<section id="why" class="wrap">
+  <h2><T k="anatomy.title" /></h2>
+  <p class="lead"><T k="anatomy.lead" /></p>
+
+  <p class="anatomy id" data-anatomy data-typed>{seed}</p>
+
+  <div class="rows">
+    {
+      rows.map((row) => (
+        <div class="row">
+          <span class="row__label">
+            <T k={row.label} />
+          </span>
+          <span class="row__value">
+            <T k="anatomy.rfcUses" />: {row.uses} &nbsp;/&nbsp; <T k="anatomy.thisValue" />:
+            <b class={`nib nib--${row.key}`} data-nibble={row.key}>
+              {row.actual}
+            </b>
+          </span>
+          <span class={row.inside ? 'range range--in' : 'range range--out'} data-range={row.key}>
+            <T k={row.inside ? 'anatomy.inRange' : 'anatomy.outOfRange'} />
+          </span>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="conclusion"><T k="anatomy.conclusion" /></p>
+  <p class="note"><T k="anatomy.note" /></p>
+</section>

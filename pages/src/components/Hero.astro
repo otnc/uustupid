@@ -1,0 +1,34 @@
+---
+import T from './T.astro'
+
+interface Props {
+  seed: string
+}
+
+const { seed } = Astro.props
+---
+
+<section class="hero wrap">
+  <h1>uustupid</h1>
+  <p class="hero__tagline"><T k="hero.tagline" /></p>
+
+  <p class="prompt">uustupid()</p>
+  <output class="value id"
+    ><span data-hero-id data-typed>{seed}</span><span class="value__caret" aria-hidden="true"
+      >▌</span
+    ></output
+  >
+  <p class="sr-only" role="status" data-announce></p>
+
+  <div class="actions">
+    <button type="button" class="primary bracketed" data-action="regenerate">
+      <T k="hero.regenerate" />
+    </button>
+    <button type="button" class="bracketed" data-action="copy-hero">
+      <T k="hero.copy" />
+    </button>
+  </div>
+
+  <p class="warn"><T k="hero.warning" /></p>
+  <p class="lead" style="margin-top:1.5rem"><T k="hero.lead" /></p>
+</section>

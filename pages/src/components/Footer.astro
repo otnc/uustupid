@@ -1,0 +1,12 @@
+---
+import { LICENSE_URL, NPM_URL, REPO_URL } from '../consts'
+import T from './T.astro'
+---
+
+<footer class="foot wrap">
+  <p><T k="footer.builtWith" /></p>
+  <p>
+    <a href={REPO_URL}>github</a> · <a href={NPM_URL}>npm</a> ·
+    <a href={LICENSE_URL}><T k="footer.license" /></a>
+  </p>
+</footer>

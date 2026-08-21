@@ -1,0 +1,22 @@
+---
+import T from './T.astro'
+
+const diagram = [
+  '  version   variant     why it can never become valid',
+  '  -------   -------     -----------------------------',
+  '     <b>0</b>       <b>x1xx</b>       0 belongs to the Nil UUID, so no',
+  '                        version can ever be given it',
+  '   <b>9 - f</b>     <b>01xx</b>       9-f are unassigned, so the variant',
+  '                        holds the line: 01xx is NCS legacy,',
+  '                        already spent, never reassignable',
+].join('\n')
+---
+
+<section id="method" class="wrap">
+  <h2><T k="method.title" /></h2>
+  <p class="lead"><T k="method.lead" /></p>
+
+  <div class="diagram" aria-hidden="true" set:html={diagram} />
+
+  <p class="note"><T k="method.note" /></p>
+</section>

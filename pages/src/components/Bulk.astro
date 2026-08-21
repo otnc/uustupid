@@ -1,0 +1,20 @@
+---
+import T from './T.astro'
+---
+
+<section id="bulk" class="wrap">
+  <h2><T k="bulk.title" /></h2>
+
+  <div class="controls">
+    <label for="count"><T k="bulk.count" /></label>
+    <input id="count" type="number" min="1" max="200" value="16" data-count />
+    <button type="button" class="primary bracketed" data-action="generate">
+      <T k="bulk.generate" />
+    </button>
+    <button type="button" class="bracketed" data-action="copy-all">
+      <T k="bulk.copyAll" />
+    </button>
+  </div>
+
+  <ol class="ids" data-list></ol>
+</section>
