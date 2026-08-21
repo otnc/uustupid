@@ -1,0 +1,72 @@
+{
+  "name": "uustupid",
+  "version": "0.1.0",
+  "description": "UUID-shaped random strings, guaranteed never to be valid RFC 9562 UUIDs.",
+  "keywords": [
+    "uuid",
+    "fake-uuid",
+    "random",
+    "id",
+    "joke",
+    "rfc9562",
+    "not-a-uuid",
+    "uuidv4",
+    "uuidv7"
+  ],
+  "homepage": "https://github.com/otnc/uustupid#readme",
+  "bugs": {
+    "url": "https://github.com/otnc/uustupid/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otnc/uustupid.git",
+    "directory": "pkg"
+  },
+  "license": "WTFPL",
+  "author": "otoneko. <pineapple2006.11.2@gmail.com>",
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": {
+        "import": "./dist/index.d.ts",
+        "require": "./dist/index.d.cts"
+      },
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "prepack": "tsdown"
+  },
+  "devDependencies": {
+    "@types/is-uuid": "catalog:",
+    "@types/node": "catalog:",
+    "@types/validator": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "is-uuid": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "uuid": "catalog:",
+    "validator": "catalog:",
+    "vitest": "catalog:",
+    "yup": "catalog:",
+    "zod": "catalog:"
+  }
+}
