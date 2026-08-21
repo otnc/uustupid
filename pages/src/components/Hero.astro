@@ -6,6 +6,9 @@ interface Props {
 }
 
 const { seed } = Astro.props
+
+// <output> is a live region on its own, so aria-live="off" keeps the typing
+// silent; the finished value is announced once, below.
 ---
 
 <section class="hero wrap">
@@ -13,7 +16,7 @@ const { seed } = Astro.props
   <p class="hero__tagline"><T k="hero.tagline" /></p>
 
   <p class="prompt">uustupid()</p>
-  <output class="value id"
+  <output class="value id" aria-live="off"
     ><span data-hero-id data-typed>{seed}</span><span class="value__caret" aria-hidden="true"
       >▌</span
     ></output
@@ -30,5 +33,5 @@ const { seed } = Astro.props
   </div>
 
   <p class="warn"><T k="hero.warning" /></p>
-  <p class="lead" style="margin-top:1.5rem"><T k="hero.lead" /></p>
+  <p class="lead"><T k="hero.lead" /></p>
 </section>
