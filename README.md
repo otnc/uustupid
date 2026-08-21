@@ -6,8 +6,8 @@ Random strings that keep the familiar UUID layout while being **guaranteed not t
 RFC 9562 UUIDs**.
 
 ```
-47124209-7d1e-0dc0-6921-2c0dcd6c6f16
-6c23cee4-9fc4-001c-64b8-ab8a0b3f63ee
+35c8928b-2e6f-0eb0-446b-b2dd0fec9d0c
+2d3dd9e3-3048-9058-5637-710af513cf2e
 ```
 
 All 32 hex digits come from Web Crypto. The two reserved nibbles are then moved out of the RFC’s

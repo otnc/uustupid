@@ -8,9 +8,9 @@
 [![Node](https://img.shields.io/node/v/uustupid)](https://www.npmjs.com/package/uustupid)
 
 ```
-47124209-7d1e-0dc0-6921-2c0dcd6c6f16
-6c23cee4-9fc4-001c-64b8-ab8a0b3f63ee
-4f9d6521-f88a-0efd-c5e6-baa5cf30f0f4
+35c8928b-2e6f-0eb0-446b-b2dd0fec9d0c
+2d3dd9e3-3048-9058-5637-710af513cf2e
+eca716c3-8986-d969-7a8d-6a43435c8879
 ```
 
 All 32 hex digits come from Web Crypto. The two reserved nibbles are then moved out of the RFC’s
@@ -32,8 +32,8 @@ npm install uustupid
 ```ts
 import { uustupid, isUustupid } from 'uustupid'
 
-uustupid()
-// => '47124209-7d1e-0dc0-6921-2c0dcd6c6f16'
+uustupid() // => '35c8928b-2e6f-0eb0-446b-b2dd0fec9d0c'
+uustupid() // => '2d3dd9e3-3048-9058-5637-710af513cf2e'
 
 isUustupid(uustupid())          // => true
 isUustupid(crypto.randomUUID()) // => false — real UUIDs never pass
