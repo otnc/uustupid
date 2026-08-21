@@ -1,0 +1,33 @@
+---
+import { uustupid } from 'uustupid'
+import Anatomy from '../components/Anatomy.astro'
+import Bulk from '../components/Bulk.astro'
+import Method from '../components/Method.astro'
+import Footer from '../components/Footer.astro'
+import Header from '../components/Header.astro'
+import Hero from '../components/Hero.astro'
+import Install from '../components/Install.astro'
+import Verify from '../components/Verify.astro'
+import Base from '../layouts/Base.astro'
+
+// Built by the real package at build time, so the page works without JavaScript.
+const seed = uustupid()
+const uuid = crypto.randomUUID()
+---
+
+<Base>
+  <Header />
+  <main>
+    <Hero seed={seed} />
+    <Method />
+    <Anatomy seed={seed} />
+    <Verify seed={seed} uuid={uuid} />
+    <Bulk />
+    <Install />
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/app'
+</script>
