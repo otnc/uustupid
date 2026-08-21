@@ -8,6 +8,8 @@ on:
         required: true
         default: patch
 
+concurrency: release
+
 # Trusted publishing: npm authenticates this workflow via OIDC, so no NPM_TOKEN
 # secret is needed. Configure the link on npmjs.com first:
 #   package Settings -> Publishing access -> Trusted publishers -> GitHub
@@ -52,17 +54,6 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # `pnpm pack` resolves the catalog: protocol into real ranges (npm cannot),
-      # and its prepack hook rebuilds dist/. Publishing the tarball keeps npm's
-      # trusted publishing (OIDC): no NODE_AUTH_TOKEN, provenance from CI.
-      - run: npm install -g npm@11
-      - run: pnpm pack
-        working-directory: pkg
-      - run: npm publish "uustupid-${VERSION#v}.tgz" --access public --provenance
-        working-directory: pkg
-        env:
-          VERSION: ${{ steps.bump.outputs.version }}
-
       - name: Commit, tag and push
         run: |
           git config user.name "github-actions[bot]"
@@ -76,7 +67,24 @@ jobs:
           fi
           git push origin HEAD "${{ steps.bump.outputs.version }}"
 
+      # `pnpm pack` resolves the catalog: protocol into real ranges (npm cannot),
+      # and its prepack hook rebuilds dist/. Publishing the tarball keeps npm's
+      # trusted publishing (OIDC): no NODE_AUTH_TOKEN, provenance from CI.
+      - run: npm install -g npm@11
+      - run: pnpm pack
+        working-directory: pkg
+      - run: npm publish "uustupid-${VERSION#v}.tgz" --access public --provenance
+        working-directory: pkg
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ steps.bump.outputs.version }}" --title "${{ steps.bump.outputs.version }}" --generate-notes
+        run: |
+          TAG="${{ steps.bump.outputs.version }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::notice::Release $TAG already exists."
+          else
+            gh release create "$TAG" --title "$TAG" --generate-notes
+          fi
