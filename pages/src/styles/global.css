@@ -176,12 +176,12 @@ p {
 /* Sections ---------------------------------------------------------------- */
 
 section {
-  counter-increment: section;
   padding: 2.25rem 0;
   border-bottom: 1px solid var(--hair);
 }
 
 h2 {
+  counter-increment: section;
   margin-bottom: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -245,6 +245,10 @@ h3::before {
 .hero__tagline {
   margin: 0.6rem 0 1.75rem;
   color: var(--dim);
+}
+
+.hero .lead {
+  margin-top: 1.5rem;
 }
 
 .prompt {
