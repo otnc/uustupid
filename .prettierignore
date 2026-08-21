@@ -1,0 +1,11 @@
+# Local-only notes and generated output
+.private/
+dist/
+coverage/
+.astro/
+.wrangler/
+pnpm-lock.yaml
+
+# Prose is hand-wrapped, so keep Prettier out of it.
+*.md
+LICENSE
