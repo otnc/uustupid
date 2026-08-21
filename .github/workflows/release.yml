@@ -1,0 +1,82 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release: a semver bump (patch/minor/major/prerelease) or an explicit version (e.g. 0.1.0)'
+        required: true
+        default: patch
+
+# Trusted publishing: npm authenticates this workflow via OIDC, so no NPM_TOKEN
+# secret is needed. Configure the link on npmjs.com first:
+#   package Settings -> Publishing access -> Trusted publishers -> GitHub
+permissions:
+  contents: write # push the version commit/tag and create the GitHub Release
+  id-token: write # npm trusted publishing (OIDC)
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run ci
+      - run: pnpm --filter uustupid build
+      - run: pnpm run typecheck
+      - run: pnpm run test
+      - run: pnpm --filter pages build
+
+      - name: Bump version
+        id: bump
+        working-directory: pkg
+        run: |
+          OLD="$(node -p "require('./package.json').version")"
+          npm version "${{ inputs.version }}" --no-git-tag-version --allow-same-version >/dev/null
+          NEW="$(node -p "require('./package.json').version")"
+          echo "version=v${NEW}" >> "$GITHUB_OUTPUT"
+          if [ "$OLD" = "$NEW" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Version is already ${NEW}; skipping the bump commit but still releasing."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # `pnpm pack` resolves the catalog: protocol into real ranges (npm cannot),
+      # and its prepack hook rebuilds dist/. Publishing the tarball keeps npm's
+      # trusted publishing (OIDC): no NODE_AUTH_TOKEN, provenance from CI.
+      - run: npm install -g npm@11
+      - run: pnpm pack
+        working-directory: pkg
+      - run: npm publish "uustupid-${VERSION#v}.tgz" --access public --provenance
+        working-directory: pkg
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+
+      - name: Commit, tag and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Only commit when the bump actually changed package.json; otherwise just tag and release.
+          if [ "${{ steps.bump.outputs.changed }}" = "true" ]; then
+            git commit -am "release: ${{ steps.bump.outputs.version }}"
+          fi
+          if ! git rev-parse -q --verify "refs/tags/${{ steps.bump.outputs.version }}" >/dev/null; then
+            git tag "${{ steps.bump.outputs.version }}"
+          fi
+          git push origin HEAD "${{ steps.bump.outputs.version }}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ steps.bump.outputs.version }}" --title "${{ steps.bump.outputs.version }}" --generate-notes

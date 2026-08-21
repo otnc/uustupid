@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+    branches: [main, release/*]
+  pull_request:
+    branches: [main, release/*]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run ci
+      # The site type-checks and tests against the built package, so pkg goes first.
+      - run: pnpm --filter uustupid build
+      - run: pnpm run typecheck
+      - run: pnpm run test
+      - run: pnpm --filter pages build
