@@ -1,0 +1,32 @@
+{
+  "name": "pages",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check",
+    "test": "vitest run",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "uustupid": "workspace:*"
+  },
+  "devDependencies": {
+    "@astrojs/check": "catalog:",
+    "@astrojs/sitemap": "catalog:",
+    "@types/is-uuid": "catalog:",
+    "@types/validator": "catalog:",
+    "astro": "catalog:",
+    "is-uuid": "catalog:",
+    "typescript": "catalog:",
+    "uuid": "catalog:",
+    "validator": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:",
+    "yup": "catalog:",
+    "zod": "catalog:"
+  }
+}
