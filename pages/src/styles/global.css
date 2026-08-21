@@ -1,0 +1,599 @@
+/* Terminal brutalism: one typeface, square corners, hard rules, no shadows.
+   Nothing may scroll sideways — ids shrink to fit instead. */
+
+:root {
+  --bg: #e8e6e1;
+  --fg: #14130f;
+  --dim: #5e5b52;
+  --rule: #14130f;
+  --hair: #c9c5bb;
+  --panel: #f4f2ee;
+  --accent: #a1240f;
+  --accent-fg: #ffffff;
+  --variant: #12507a;
+  --ok: #1d6b3a;
+  --mono:
+    ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0c0c;
+    --fg: #ddd8cc;
+    --dim: #8a857a;
+    --rule: #6a6459;
+    --hair: #2b2a26;
+    --panel: #151513;
+    --accent: #ff6a3d;
+    --accent-fg: #0c0c0c;
+    --variant: #56b6f0;
+    --ok: #6fce8a;
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 15px;
+  line-height: 1.65;
+  counter-reset: section;
+  overflow-wrap: break-word;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Language: both strings ship, one shows. Default is English. */
+:root[data-lang='ja'] [lang='en'],
+:root:not([data-lang='ja']) [lang='ja'] {
+  display: none;
+}
+
+/* Values the script types out. Server-rendered so the page reads without
+   JavaScript, held back when JavaScript is there so nothing flashes before the
+   typing starts. `visibility` keeps the box, so the layout never jumps. */
+:root[data-js] [data-typed] {
+  visibility: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  background: var(--accent);
+  color: var(--accent-fg);
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  font-size: inherit;
+  font-weight: 700;
+  margin: 0;
+}
+
+p {
+  margin: 0 0 1rem;
+  max-width: 68ch;
+}
+
+.wrap {
+  width: min(100% - 2rem, 104ch);
+  margin-inline: auto;
+}
+
+@media (max-width: 30rem) {
+  .wrap {
+    width: calc(100% - 1.5rem);
+  }
+}
+
+.id {
+  font-variant-ligatures: none;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* Header ------------------------------------------------------------------ */
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
+  padding: 0.9rem 0;
+  border-bottom: 2px solid var(--rule);
+}
+
+.head__name {
+  font-weight: 700;
+  margin-right: auto;
+  text-decoration: none;
+}
+
+.head__name::before {
+  content: '~/' / '';
+  color: var(--dim);
+}
+
+.head a {
+  font-size: 0.88rem;
+}
+
+.lang {
+  display: flex;
+  border: 1px solid var(--rule);
+}
+
+.lang button {
+  border: 0;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.82rem;
+}
+
+.lang button[aria-pressed='true'] {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Sections ---------------------------------------------------------------- */
+
+section {
+  counter-increment: section;
+  padding: 2.25rem 0;
+  border-bottom: 1px solid var(--hair);
+}
+
+h2 {
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* The decoration is for the eye only — the empty alt text keeps it out of the
+   accessibility tree, so a screen reader reads the heading and nothing else. */
+h2::before {
+  content: '## ' counter(section, decimal-leading-zero) ' ' / '';
+  color: var(--dim);
+}
+
+h3 {
+  margin: 2rem 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+h3::before {
+  content: '# ' / '';
+  color: var(--dim);
+}
+
+.lead {
+  color: var(--dim);
+}
+
+.note {
+  color: var(--dim);
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
+.warn {
+  border: 2px solid var(--accent);
+  padding: 0.65rem 0.85rem;
+  margin: 1.25rem 0 0;
+  max-width: none;
+  font-size: 0.9rem;
+}
+
+.warn::before {
+  content: '!! ' / '';
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Hero -------------------------------------------------------------------- */
+
+.hero {
+  padding: 2.5rem 0 2rem;
+  border-bottom: 2px solid var(--rule);
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 11vw, 3.75rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.hero__tagline {
+  margin: 0.6rem 0 1.75rem;
+  color: var(--dim);
+}
+
+.prompt {
+  color: var(--dim);
+  margin: 0 0 0.3rem;
+  font-size: 0.85rem;
+}
+
+.prompt::before {
+  content: '> ' / '';
+}
+
+.value {
+  display: block;
+  border: 2px solid var(--rule);
+  background: var(--panel);
+  padding: 0.85rem;
+  font-size: min(1.9rem, 3.6vw);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  min-height: calc(1.65em + 1.7rem);
+}
+
+/* The caret sits outside [data-typed] so it shows from the first paint: an
+   empty box with a caret reads as "about to print", not as "broken". */
+.value__caret {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .value__caret {
+    animation: blink 1.1s steps(2, jump-none) infinite;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+/* Controls ---------------------------------------------------------------- */
+
+button {
+  font: inherit;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--rule);
+  padding: 0.2rem 0.7rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+button.primary:hover {
+  filter: brightness(1.15);
+}
+
+.bracketed::before {
+  content: '[' / '';
+  padding-right: 0.35ch;
+}
+
+.bracketed::after {
+  content: ']' / '';
+  padding-left: 0.35ch;
+}
+
+input[type='number'] {
+  font: inherit;
+  width: 6ch;
+  color: var(--fg);
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 0.2rem 0.4rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--dim);
+  font-size: 0.9rem;
+}
+
+/* Field rows: label, value, note. Stacks on narrow screens. ---------------- */
+
+.rows {
+  border: 1px solid var(--hair);
+  margin: 0 0 1rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(14ch, 22ch) 1fr auto;
+  gap: 0.25rem 1rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--hair);
+  align-items: baseline;
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row--head {
+  border-bottom: 2px solid var(--rule);
+}
+
+.row__label {
+  color: var(--dim);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.row__label--plain {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fg);
+  font-size: 0.85rem;
+}
+
+.row__value {
+  font-size: min(1rem, 3.9vw);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 44rem) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bulk list --------------------------------------------------------------- */
+
+.ids {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 34ch), 1fr));
+  gap: 1px;
+  background: var(--hair);
+  border: 1px solid var(--hair);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+.ids li {
+  background: var(--bg);
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  font-size: min(0.9rem, 3.6vw);
+  overflow-wrap: anywhere;
+}
+
+.ids li:hover {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* Anatomy ----------------------------------------------------------------- */
+
+.anatomy {
+  border: 2px solid var(--rule);
+  background: var(--panel);
+  padding: 0.85rem;
+  margin: 0 0 1rem;
+  font-size: min(1.6rem, 3.6vw);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  max-width: none;
+  min-height: calc(1.65em + 1.7rem);
+}
+
+.nib {
+  font-weight: 700;
+  padding: 0 0.1em;
+}
+
+.nib--version {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.nib--variant {
+  background: var(--variant);
+  color: var(--bg);
+}
+
+/* Whether a nibble sits inside the RFC's range is a fact, not a grade — so no
+   tick, no cross, no green and red. */
+.range {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.range--out {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.range--in {
+  color: var(--dim);
+}
+
+.conclusion {
+  border-left: 2px solid var(--accent);
+  padding-left: 0.7rem;
+  margin: 0 0 1rem;
+}
+
+/* A validator's answer, on the other hand, really is a pass or a fail. */
+
+.verdict {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.verdict--pass {
+  color: var(--ok);
+}
+
+.verdict--fail {
+  color: var(--accent);
+}
+
+.verdict::before {
+  content: '✗ ' / '';
+}
+
+.verdict--pass::before {
+  content: '✓ ' / '';
+}
+
+/* Diagrams and code ------------------------------------------------------- */
+
+.diagram {
+  border: 1px solid var(--hair);
+  background: var(--panel);
+  padding: 0.85rem;
+  margin: 0 0 1rem;
+  font-size: min(0.95rem, 3.4vw);
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.diagram b {
+  color: var(--accent);
+}
+
+pre {
+  border: 1px solid var(--hair);
+  background: var(--panel);
+  padding: 0.75rem 0.85rem;
+  overflow-x: auto;
+  font-size: min(0.85rem, 3.3vw);
+  line-height: 1.55;
+  margin: 0 0 1rem;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: -1px;
+}
+
+.tabs button {
+  font-size: 0.82rem;
+}
+
+.tabs button[aria-pressed='true'] {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Shiki renders both palettes as CSS variables; pick one per scheme. */
+
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+}
+
+/* Footer ------------------------------------------------------------------ */
+
+.foot {
+  padding: 1.5rem 0 3rem;
+  color: var(--dim);
+  font-size: 0.85rem;
+}
+
+.foot p {
+  margin: 0 0 0.35rem;
+  max-width: none;
+}
+
+/* Toast ------------------------------------------------------------------- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  max-width: calc(100% - 2rem);
+  background: var(--fg);
+  color: var(--bg);
+  border: 2px solid var(--fg);
+  padding: 0.25rem 1rem;
+  font-size: 0.88rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms linear;
+}
+
+.toast.on {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    transition: none;
+  }
+}

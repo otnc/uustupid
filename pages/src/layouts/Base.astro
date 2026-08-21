@@ -1,0 +1,64 @@
+---
+import { LANG_STORAGE_KEY } from '../consts'
+import { en, ja } from '../i18n'
+import '../styles/global.css'
+
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined
+
+// Strings the client has to write into the DOM itself, in both languages.
+const runtime = {
+  en: {
+    title: en['meta.title'],
+    copied: en['hero.copied'],
+    valid: en['verify.valid'],
+    invalid: en['verify.invalid'],
+    hint: en['bulk.hint'],
+    inRange: en['anatomy.inRange'],
+    outOfRange: en['anatomy.outOfRange'],
+  },
+  ja: {
+    title: ja['meta.title'],
+    copied: ja['hero.copied'],
+    valid: ja['verify.valid'],
+    invalid: ja['verify.invalid'],
+    hint: ja['bulk.hint'],
+    inRange: ja['anatomy.inRange'],
+    outOfRange: ja['anatomy.outOfRange'],
+  },
+}
+
+// Decide the language before the body paints: an explicit choice, then the
+// browser, then English.
+const pickLanguage = `
+let stored = null
+try { stored = localStorage.getItem(${JSON.stringify(LANG_STORAGE_KEY)}) } catch {}
+const preferred = stored ?? navigator.languages?.[0] ?? navigator.language ?? 'en'
+const lang = preferred.toLowerCase().startsWith('ja') ? 'ja' : 'en'
+document.documentElement.dataset.lang = lang
+document.documentElement.lang = lang
+document.documentElement.dataset.js = ''
+`
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline set:html={pickLanguage} />
+    <title>{en['meta.title']}</title>
+    <meta name="description" content={en['meta.description']} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={en['meta.title']} />
+    <meta property="og:description" content={en['meta.description']} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="generator" content={Astro.generator} />
+    <script type="application/json" id="strings" is:inline set:html={JSON.stringify(runtime)} />
+  </head>
+  <body>
+    <slot />
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+  </body>
+</html>

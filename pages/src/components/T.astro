@@ -1,0 +1,11 @@
+---
+import { en, ja, type Key } from '../i18n'
+
+interface Props {
+  k: Key
+}
+
+const { k } = Astro.props
+---
+
+<span lang="en">{en[k]}</span><span lang="ja">{ja[k]}</span>
