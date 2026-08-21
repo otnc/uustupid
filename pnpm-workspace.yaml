@@ -1,0 +1,41 @@
+packages:
+  - pkg
+  - pages
+
+catalog:
+  '@astrojs/check': ^0.9.6
+  '@astrojs/sitemap': ^3.7.3
+  '@eslint/js': ^10.0.1
+  '@types/is-uuid': ^1.0.2
+  '@types/node': ^22.20.1
+  '@types/validator': ^13.15.10
+  '@vitest/coverage-v8': ^4.1.11
+  astro: ^7.2.4
+  eslint: ^10.8.1
+  eslint-config-prettier: ^10.1.8
+  eslint-plugin-astro: ^3.1.0
+  globals: ^17.11.0
+  prettier: ^3.9.6
+  prettier-plugin-astro: ^0.14.1
+  tsdown: ^0.22.14
+  typescript: ^6.0.3
+  typescript-eslint: ^8.67.0
+  is-uuid: ^1.0.2
+  uuid: ^14.0.2
+  validator: ^13.15.35
+  vitest: ^4.1.11
+  yup: ^1.7.1
+  zod: ^4.4.3
+  wrangler: ^4.124.0
+
+# Native binaries whose install scripts have to run to unpack them.
+allowBuilds:
+  esbuild: true
+  workerd: true
+
+minimumReleaseAgeExclude:
+  - '@rolldown/binding-darwin-x64@1.2.5'
+  - '@rolldown/binding-linux-arm64-gnu@1.2.5'
+  - '@astrojs/internal-helpers@0.10.4'
+  - '@astrojs/markdown-satteri@0.3.7'
+  - astro@7.2.4
