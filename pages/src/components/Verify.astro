@@ -1,12 +1,7 @@
 ---
-import { s } from '@sapphire/shapeshift'
-import { type } from 'arktype'
-import FastestValidator from 'fastest-validator'
-import isUuid from 'is-uuid'
-import * as realUuid from 'uuid'
-import validator from 'validator'
-import * as yup from 'yup'
-import { z } from 'zod'
+import { uustupid } from 'uustupid'
+import { judge, type Reason, SAMPLE_SIZE, type Verdict } from '../ecosystem'
+import type { Key } from '../i18n'
 import { isRfc9562Uuid } from '../scripts/rfc9562'
 import T from './T.astro'
 
@@ -22,26 +17,49 @@ const rows = [
   { source: 'crypto.randomUUID()', value: uuid, key: 'real' },
 ]
 
-const arkUuid = type('string.uuid')
-const fastestUuid = new FastestValidator().compile({ value: { type: 'uuid' } })
+// Every validator gets the same samples. One wrong answer is enough to mark a column as failed.
+const ours = Array.from({ length: SAMPLE_SIZE }, () => uustupid())
+const real = Array.from({ length: SAMPLE_SIZE }, () => crypto.randomUUID())
+const verdicts = await judge(ours, real)
 
-/** Run at build time only — none of these libraries reach the browser. */
-const libraries: Array<{ name: string; check: (value: string) => boolean }> = [
-  { name: 'uuid.validate()', check: (value) => realUuid.validate(value) },
-  { name: 'validator.isUUID()', check: (value) => validator.isUUID(value) },
-  { name: 'is-uuid.anyNonNil()', check: (value) => isUuid.anyNonNil(value) },
-  { name: 'zod.uuid()', check: (value) => z.uuid().safeParse(value).success },
-  { name: 'yup.string().uuid()', check: (value) => yup.string().uuid().isValidSync(value) },
-  { name: 'arktype string.uuid', check: (value) => !(arkUuid(value) instanceof type.errors) },
-  { name: 'fastest-validator uuid', check: (value) => fastestUuid({ value }) === true },
-  { name: 's.string().uuid()', check: (value) => s.string().uuid().run(value).isOk() },
+// Grouped by what each library actually answered, so a library that changes its behavior moves
+// between the tables on the next build instead of failing it.
+const groups: Array<{ title: Key; lead: Key; items: Verdict[] }> = [
+  {
+    title: 'verify.strict',
+    lead: 'verify.strictLead',
+    items: verdicts.filter((verdict) => verdict.oursWrong === 0),
+  },
+  {
+    title: 'verify.loose',
+    lead: 'verify.looseLead',
+    items: verdicts.filter((verdict) => verdict.oursWrong > 0),
+  },
 ]
 
-const verdicts = libraries.map((library) => ({
-  name: library.name,
-  ours: library.check(seed),
-  real: library.check(uuid),
-}))
+const reasons: Record<Reason, Key> = {
+  jsonSchema: 'verify.reason.jsonSchema',
+  guid: 'verify.reason.guid',
+  loose: 'verify.reason.loose',
+  bytes: 'verify.reason.bytes',
+  legacy: 'verify.reason.legacy',
+}
+
+const columns: Array<Key | string> = [
+  'verify.col.package',
+  'verify.col.validator',
+  'uustupid()',
+  'crypto.randomUUID()',
+  'verify.col.intended',
+]
+const isKey = (column: string): column is Key => column.startsWith('verify.')
+
+// `@scope/`, `name` and `@version` each stay whole; a long name may only break between them.
+const nameParts = ({ pkg, version }: Verdict): string[] => {
+  const slash = pkg.indexOf('/')
+  const scoped = slash === -1 ? [pkg] : [pkg.slice(0, slash + 1), pkg.slice(slash + 1)]
+  return [...scoped, `@${version}`]
+}
 ---
 
 <section id="verify" class="wrap">
@@ -72,26 +90,101 @@ const verdicts = libraries.map((library) => ({
   <h3><T k="verify.libraries" /></h3>
   <p class="lead"><T k="verify.librariesLead" /></p>
 
-  <div class="rows">
-    <div class="row row--head">
-      <span class="row__label"><T k="verify.library" /></span>
-      <span class="row__label">uustupid()</span>
-      <span class="row__label">crypto.randomUUID()</span>
-    </div>
-    {
-      verdicts.map((verdict) => (
-        <div class="row">
-          <code class="row__label row__label--plain">{verdict.name}</code>
-          <span class={verdict.ours ? 'verdict verdict--pass' : 'verdict verdict--fail'}>
-            <T k={verdict.ours ? 'verify.valid' : 'verify.invalid'} />
-          </span>
-          <span class={verdict.real ? 'verdict verdict--pass' : 'verdict verdict--fail'}>
-            <T k={verdict.real ? 'verify.valid' : 'verify.invalid'} />
-          </span>
-        </div>
-      ))
-    }
-  </div>
+  {
+    groups.map((group) => (
+      <>
+        <h4>
+          <T k={group.title} />
+        </h4>
+        <p class="lead">
+          <T k={group.lead} />
+        </p>
+        <table class="checks">
+          <thead>
+            <tr>
+              {columns.map((column) => (
+                <th scope="col">{isKey(column) ? <T k={column} /> : column}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {group.items.map((verdict) => (
+              <tr>
+                <td>
+                  <span class="checks__label" aria-hidden="true">
+                    <T k="verify.col.package" />
+                  </span>
+                  <code class="checks__pkg">
+                    {nameParts(verdict).map((part, index) => (
+                      <>
+                        {index > 0 && <wbr />}
+                        <span>{part}</span>
+                      </>
+                    ))}
+                  </code>
+                </td>
+                <td>
+                  <span class="checks__label" aria-hidden="true">
+                    <T k="verify.col.validator" />
+                  </span>
+                  <code>{verdict.fn}</code>
+                </td>
+                <td>
+                  <span class="checks__label" aria-hidden="true">
+                    uustupid()
+                  </span>
+                  {verdict.oursWrong === 0 ? (
+                    <span class="verdict verdict--pass">
+                      <T k="verify.rejectedAll" />
+                    </span>
+                  ) : (
+                    <span class="verdict verdict--fail">
+                      <T k="verify.accepted" /> {verdict.oursWrong}/{verdict.total}
+                    </span>
+                  )}
+                </td>
+                <td>
+                  <span class="checks__label" aria-hidden="true">
+                    crypto.randomUUID()
+                  </span>
+                  {verdict.realWrong === 0 ? (
+                    <span class="verdict verdict--pass">
+                      <T k="verify.acceptedAll" />
+                    </span>
+                  ) : (
+                    <span class="verdict verdict--fail">
+                      <T k="verify.rejected" /> {verdict.realWrong}/{verdict.total}
+                    </span>
+                  )}
+                </td>
+                <td class="checks__intended">
+                  <span class="checks__label" aria-hidden="true">
+                    <T k="verify.col.intended" />
+                  </span>
+                  {verdict.oursWrong === 0 ? (
+                    <span>—</span>
+                  ) : (
+                    <span>
+                      <strong>
+                        <T
+                          k={
+                            verdict.reason && verdict.reason !== 'legacy'
+                              ? 'verify.intended.yes'
+                              : 'verify.intended.no'
+                          }
+                        />
+                      </strong>{' '}
+                      <T k={verdict.reason ? reasons[verdict.reason] : 'verify.reason.shapeOnly'} />
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    ))
+  }
 
   <p class="note"><T k="verify.librariesNote" /></p>
 </section>

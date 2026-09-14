@@ -48,10 +48,33 @@ export const en = {
   'verify.note': 'Fresh values on every load. The verdicts never swap around.',
   'verify.libraries': 'What the ecosystem says',
   'verify.librariesLead':
-    'Published validators, run against a uustupid and a real UUID while this page was built. Every one of them reads the fields RFC 9562 reserves, and every one of them rejects the uustupid.',
-  'verify.library': 'Validator',
+    'Every validator below was given the same 100 uustupids and the same 100 real UUIDs while this page was built. A tick means all 100 answers were the expected ones. A cross means at least one was not, and the number says how many of the 100 were wrong.',
+  'verify.strict': 'Rejected every uustupid',
+  'verify.strictLead':
+    'These read the version and variant that RFC 9562 reserves, so not one uustupid got through.',
+  'verify.loose': 'Called a uustupid a UUID',
+  'verify.looseLead':
+    'These accepted at least one uustupid. The last column says whether the library means to.',
+  'verify.col.package': 'Package',
+  'verify.col.validator': 'Validator',
+  'verify.col.intended': 'Intended',
+  'verify.rejectedAll': 'Rejected all',
+  'verify.acceptedAll': 'Accepted all',
+  'verify.accepted': 'Accepted',
+  'verify.rejected': 'Rejected',
+  'verify.intended.yes': 'Yes.',
+  'verify.intended.no': 'No.',
+  'verify.reason.jsonSchema':
+    'JSON Schema defines format "uuid" as a syntax check, and its official test suite requires an undefined version and variant to pass.',
+  'verify.reason.guid': 'Accepts GUID-style strings, not only RFC 9562 UUIDs.',
+  'verify.reason.loose': 'An explicitly loose mode that checks only the shape.',
+  'verify.reason.bytes': 'Treats a UUID as any 128-bit value, whatever its version and variant.',
+  'verify.reason.legacy':
+    'An older major version. The current major reads the version and variant.',
+  'verify.reason.shapeOnly':
+    'Checks only the 8-4-4-4-12 shape and never reads the version or variant.',
   'verify.librariesNote':
-    'The same table is a test in the package, so a library changing its mind fails CI. None of these libraries reach your browser — the table is computed while the page is built.',
+    'Each version shown is the one installed when the page was built. If a library changes its behavior, it simply moves to the other table on the next build: nothing fails. None of these libraries reach your browser.',
 
   'install.title': 'Install',
   'install.note':
@@ -114,10 +137,32 @@ export const ja: Record<Key, string> = {
   'verify.note': '読み込むたびに新しい値で判定しています。何度試しても結果は入れ替わりません。',
   'verify.libraries': 'エコシステムの判定',
   'verify.librariesLead':
-    '公開されている検証器に uustupid と本物の UUID を食わせた結果です（このページのビルド時に実行）。いずれも RFC 9562 の予約フィールドを読むもので、すべてが uustupid を弾きます。',
-  'verify.library': '検証器',
+    'このページのビルド時に、どの検証器にも同じ 100 個の uustupid と、同じ 100 個の本物の UUID を食わせた結果です。✓ は 100 回すべて想定どおりに判定したこと、✗ は一度でも想定と違う判定をしたことを表し、数字は 100 回中の誤判定の回数です。',
+  'verify.strict': 'uustupid をすべて弾いた検証器',
+  'verify.strictLead':
+    'RFC 9562 が予約している version と variant を読むので、uustupid を 1 つも通しませんでした。',
+  'verify.loose': 'uustupid を UUID と判定した検証器',
+  'verify.looseLead':
+    '1 つでも uustupid を通したものです。最後の列は、それがライブラリの意図した挙動かどうかです。',
+  'verify.col.package': 'パッケージ',
+  'verify.col.validator': '検証器',
+  'verify.col.intended': '意図された挙動か',
+  'verify.rejectedAll': 'すべて弾いた',
+  'verify.acceptedAll': 'すべて通した',
+  'verify.accepted': '通した',
+  'verify.rejected': '弾いた',
+  'verify.intended.yes': 'はい。',
+  'verify.intended.no': 'いいえ。',
+  'verify.reason.jsonSchema':
+    'JSON Schema は format "uuid" を構文のチェックと定めており、公式テストスイートが未定義の version と variant を有効とするよう要求しています。',
+  'verify.reason.guid': 'RFC 9562 の UUID に限らず、GUID 形式の文字列も受け入れる設計です。',
+  'verify.reason.loose': '形だけを見ると明示された緩いモードです。',
+  'verify.reason.bytes':
+    'version や variant に関係なく、UUID を任意の 128 ビット値として扱います。',
+  'verify.reason.legacy': '旧メジャー版です。現行のメジャー版は version と variant を読みます。',
+  'verify.reason.shapeOnly': '8-4-4-4-12 の形だけを見ていて、version も variant も読んでいません。',
   'verify.librariesNote':
-    'この表はパッケージ側のテストにもなっているので、ライブラリの挙動が変われば CI が落ちます。これらのライブラリはブラウザには届きません — 表はビルド時に計算しています。',
+    'バージョンは、ページのビルド時にインストールされていたものです。ライブラリの挙動が変われば、次のビルドでもう一方の表に移るだけで、何も失敗しません。これらのライブラリがブラウザに届くことはありません。',
 
   'install.title': 'インストール',
   'install.note':
