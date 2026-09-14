@@ -88,9 +88,14 @@ a test in the package, so a library changing its mind fails CI:
 | `is-uuid.anyNonNil()` | rejected | accepted |
 | `zod.uuid()` | rejected | accepted |
 | `yup.string().uuid()` | rejected | accepted |
+| `arktype` `string.uuid` | rejected | accepted |
+| `fastest-validator` `uuid` | rejected | accepted |
+| `@sapphire/shapeshift` `s.string().uuid()` | rejected | accepted |
 
 A checker that only matches the `8-4-4-4-12` shape will of course accept these — it never looks
 at the version or variant. **A validator accepting the value does not make it a UUID.**
+
+JSON Schema's `format: "uuid"` is one of those on purpose: its official test suite requires a hypothetical version 15 and an undefined variant to pass, so Ajv and other JSON Schema validators accept these values by design.
 
 ## Requirements
 
