@@ -1,4 +1,7 @@
 ---
+import { s } from '@sapphire/shapeshift'
+import { type } from 'arktype'
+import FastestValidator from 'fastest-validator'
 import isUuid from 'is-uuid'
 import * as realUuid from 'uuid'
 import validator from 'validator'
@@ -19,6 +22,9 @@ const rows = [
   { source: 'crypto.randomUUID()', value: uuid, key: 'real' },
 ]
 
+const arkUuid = type('string.uuid')
+const fastestUuid = new FastestValidator().compile({ value: { type: 'uuid' } })
+
 /** Run at build time only — none of these libraries reach the browser. */
 const libraries: Array<{ name: string; check: (value: string) => boolean }> = [
   { name: 'uuid.validate()', check: (value) => realUuid.validate(value) },
@@ -26,6 +32,9 @@ const libraries: Array<{ name: string; check: (value: string) => boolean }> = [
   { name: 'is-uuid.anyNonNil()', check: (value) => isUuid.anyNonNil(value) },
   { name: 'zod.uuid()', check: (value) => z.uuid().safeParse(value).success },
   { name: 'yup.string().uuid()', check: (value) => yup.string().uuid().isValidSync(value) },
+  { name: 'arktype string.uuid', check: (value) => !(arkUuid(value) instanceof type.errors) },
+  { name: 'fastest-validator uuid', check: (value) => fastestUuid({ value }) === true },
+  { name: 's.string().uuid()', check: (value) => s.string().uuid().run(value).isOk() },
 ]
 
 const verdicts = libraries.map((library) => ({
