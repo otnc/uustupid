@@ -103,7 +103,8 @@ a:hover {
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
   font-size: inherit;
   font-weight: 700;
   margin: 0;
@@ -202,6 +203,15 @@ h3 {
 
 h3::before {
   content: '# ' / '';
+  color: var(--dim);
+}
+
+h4 {
+  margin: 1.5rem 0 0.4rem;
+}
+
+h4::before {
+  content: '## ' / '';
   color: var(--dim);
 }
 
@@ -398,6 +408,135 @@ input[type='number'] {
 @media (max-width: 44rem) {
   .row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Validator tables --------------------------------------------------------
+   A real table on wide screens, with the header following the reader down a
+   long list. Narrower screens turn every row into a small card of labelled
+   cells instead, so nothing ever scrolls sideways. */
+
+.checks {
+  width: 100%;
+  margin: 0 0 1.5rem;
+  border: 1px solid var(--hair);
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.checks th,
+.checks td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--hair);
+  text-align: left;
+  vertical-align: top;
+}
+
+.checks thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg);
+  border-bottom: 2px solid var(--rule);
+  color: var(--dim);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.checks tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* A package name may break only between its scope, name and version. */
+.checks__pkg span {
+  white-space: nowrap;
+}
+
+.checks .verdict {
+  white-space: nowrap;
+}
+
+.checks__intended {
+  min-width: 30ch;
+  color: var(--dim);
+}
+
+.checks__intended strong {
+  color: var(--fg);
+}
+
+/* Only shown when the header row is not. */
+.checks__label {
+  display: none;
+}
+
+@media (max-width: 62rem) {
+  .checks,
+  .checks tbody {
+    display: block;
+  }
+
+  .checks thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .checks tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem 1rem;
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .checks tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .checks td,
+  .checks tbody tr:last-child td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .checks td:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .checks__pkg span {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .checks__label {
+    display: block;
+    margin-bottom: 0.1rem;
+    color: var(--dim);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
+/* On a phone the package and the function get a line each; the two verdicts
+   stay side by side, where they are easiest to compare. */
+@media (max-width: 30rem) {
+  .checks td:first-child,
+  .checks td:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+
+  .checks .verdict {
+    white-space: normal;
   }
 }
 
