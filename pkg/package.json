@@ -56,10 +56,13 @@
     "prepack": "tsdown"
   },
   "devDependencies": {
+    "@sapphire/shapeshift": "catalog:",
     "@types/is-uuid": "catalog:",
     "@types/node": "catalog:",
     "@types/validator": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "arktype": "catalog:",
+    "fastest-validator": "catalog:",
     "is-uuid": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

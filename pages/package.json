@@ -17,9 +17,12 @@
   "devDependencies": {
     "@astrojs/check": "catalog:",
     "@astrojs/sitemap": "catalog:",
+    "@sapphire/shapeshift": "catalog:",
     "@types/is-uuid": "catalog:",
     "@types/validator": "catalog:",
+    "arktype": "catalog:",
     "astro": "catalog:",
+    "fastest-validator": "catalog:",
     "is-uuid": "catalog:",
     "typescript": "catalog:",
     "uuid": "catalog:",

@@ -1,3 +1,6 @@
+import { s } from '@sapphire/shapeshift'
+import { type } from 'arktype'
+import FastestValidator from 'fastest-validator'
 import isUuid from 'is-uuid'
 import * as realUuid from 'uuid'
 import validator from 'validator'
@@ -13,6 +16,9 @@ const real = (): string[] => Array.from({ length: SAMPLE }, () => crypto.randomU
 
 type Check = (value: string) => boolean
 
+const arkUuid = type('string.uuid')
+const fastestUuid = new FastestValidator().compile({ value: { type: 'uuid' } })
+
 /** Published validators that read the fields RFC 9562 reserves. */
 const validators: Record<string, Check> = {
   'uuid.validate': (value) => realUuid.validate(value),
@@ -21,6 +27,9 @@ const validators: Record<string, Check> = {
   'is-uuid.anyNonNil': (value) => isUuid.anyNonNil(value),
   'zod.uuid': (value) => z.uuid().safeParse(value).success,
   'yup.string().uuid()': (value) => yup.string().uuid().isValidSync(value),
+  'arktype string.uuid': (value) => !(arkUuid(value) instanceof type.errors),
+  'fastest-validator uuid': (value) => fastestUuid({ value }) === true,
+  'shapeshift string().uuid()': (value) => s.string().uuid().run(value).isOk(),
 }
 
 describe.each(Object.entries(validators))('%s', (_name, check) => {
